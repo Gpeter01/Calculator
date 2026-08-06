@@ -5,5 +5,9 @@
     box-sizing: border-box;
 }
 body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;;
     background-color: rgba(47, 41, 109, 0.5);
 }
