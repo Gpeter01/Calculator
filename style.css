@@ -88,9 +88,6 @@ body {
     font-size: 2rem;
     color: white;
 }
-.key-feature > div {
-    width: 11.25vw;
-}
 .number-pad > div,
 .key-feature > div {
     background-color: black;
