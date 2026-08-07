@@ -40,3 +40,59 @@ body {
 .query > p {
     font-size: 2rem;
 }
+.calculator-container {
+    display: flex;
+    height: fit-content;
+    border-top: 1px solid black;
+}
+.main-calculator {
+    display: flex;
+    width: 22.5vw;;
+    flex-direction: column;
+}
+.special {
+    display: flex;
+}
+.operands {
+    display: flex;
+    flex-direction: column;
+}
+.number-pad {
+    display: flex;
+    flex-flow: row wrap;
+}
+.key-feature {
+    display: flex;
+}
+.calculator-operations {
+    display: flex;
+    flex-direction: column;
+}
+.calculator-operations > div,
+.number-pad > div,
+.special > div,
+.key-feature > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7.5vw;
+    width: 7.5vw;
+    border: 1px solid black;
+    border-radius: 1rem;
+    font-size: 2rem;
+    color: white;
+}
+.key-feature > div {
+    width: 11.25vw;
+}
+.number-pad > div,
+.key-feature > div {
+    background-color: black;
+    border: 1px solid white;
+}
+.special > div {
+    background-color: orange;
+}
+.calculator-operations {
+    background-color: grey;
+}
