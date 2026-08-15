@@ -35,15 +35,19 @@ body {
     align-items: flex-end;
     color: black;
     height: 3vw;
-    padding: 5px;
-    opacity: 0;
+    padding: 0 10px 0 0;
+}
+.para-result,
+.para-query {
+    opacity: 1;
+
 }
 .temp-result {
     align-items: flex-end;
-    color: rgba(0, 0, 0, 0.55)
+    color: black;
 }
 .temp-result > p {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
 }
 .query > p {
     font-size: 1.75rem;
