@@ -24,7 +24,6 @@ const content = {
     'displayContent' : '',
 };
 const operationViableSigns = ['÷', '\u00D7', '+', '-', '='];
-let currentDisplayContent = '';
 let evaluatedDisplayContent = '';
 let currentMethod = '';
 let clickCount = 0;
@@ -225,7 +224,24 @@ function executeSpecialKey(event) {
     } else if (target.classList[0] === 'plus-or-minus') {
         getMinus();
         return;
+    } else if (target.classList[0] === 'refresh') {
+        refresh();
+        return;
     }
+}
+function refresh() {
+    variables.firstNumber = '';
+    variables.currentNumber = '';
+    variables.evaluatedValue = '';
+    variables.operationSign = '';
+    clickCount = 0;
+    errorCheck = 0;
+    previousResults = [];
+    evaluatedDisplayContent = '';
+    currentMethod = '';
+    getParaResult();
+    getDisplayContent();
+    return;
 }
 function getMinus() {
     if (variables.firstNumber !== '' && variables.operationSign !== '') {
