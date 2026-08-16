@@ -31,9 +31,15 @@ let clickCount = 0;
 let errorCheck = 0;
 let previousResults = [];
 
+const paraQuery = document.querySelector('.para-query');
+const paraResult = document.querySelector('.para-result');
+
+
 const operationMethods = {
     divide(a, b) { 
-        if (Number(a) === 0) {
+        if (b === '-') {
+            b = -1;
+        } else if (Number(a) === 0 || a === '-') {
             variables.firstNumber = '';
             variables.currentNumber = '';
             variables.evaluatedValue = '';
@@ -44,17 +50,36 @@ const operationMethods = {
             paraQuery.textContent = content.displayContent;
             paraQuery.style.color = 'red';
             errorCheck++;
+            console.log(paraQuery.style.color);
             return;
         }
+        console.log('not here');
         return (Number(a) / Number(b)).toFixed(1);
     },
     multiply(a, b) {
+        if (b === '-') {
+            b = -1;
+        }
+        if (a === '-') {
+           a = -1;
+        }
         return (Number(a) * Number(b)).toFixed(1);
     },
     add(a, b) {
+        if (b === '-') {
+            return Number(a).toFixed(1);
+        } else if (a === '-') {
+            return '-' + Number(b).toFixed(1);
+        }
         return (Number(a) + Number(b)).toFixed(1);
     },
     subtract(a, b) {
+        if (b === '-') {
+            return Number(a).toFixed(1);
+        }
+        if (a === '-') {
+            return Number(a).toFixed(1);
+        }
         return (Number(a) - Number(b)).toFixed(1);
     }
 };
@@ -65,8 +90,6 @@ const mainOperations = [
     operationMethods.add,
     operationMethods.subtract
 ];
-const paraQuery = document.querySelector('.para-query');
-const paraResult = document.querySelector('.para-result');
 
 const operands = document.querySelector('.operands');
 operands.addEventListener('mousedown', iterateNumber);
@@ -143,20 +166,7 @@ function iterateNumber(event) {
                 if (content['displayContent'] === '') {
                     variables.firstNumber += numbers[key];
                     return;
-                } else if (lastCharacter === operationViableSigns[0] || lastCharacter === operationViableSigns[1] || lastCharacter === operationViableSigns[2] || lastCharacter === operationViableSigns[3]) {
-                    if (previousResults.length === 0) {
-                        variables.currentNumber += numbers[key];
-                        variables.evaluatedValue = currentMethod(variables.firstNumber, variables.currentNumber);
-                        getParaResult();
-                        return;
-                    } else {
-                        variables.currentNumber += numbers[key];
-                        const lastTerm = previousResults.length - 1;
-                        variables.evaluatedValue = currentMethod(previousResults[lastTerm], variables.currentNumber);
-                        getParaResult();
-                        return;
-                    }
-                } else if ((variables.evaluatedValue === '') && (variables.currentNumber === '')) {
+                } else if ((variables.operationSign === '') && (variables.currentNumber === '')) {
                     if (variables.firstNumber.length === 9) {
                         return;
                     }
@@ -181,14 +191,23 @@ function iterateNumber(event) {
                         getParaResult();
                         return;
                     }
-                } else if (variables.evaluatedValue !== '' && variables.firstNumber !== '') {
+                } else if (variables.operationSign !== '' && variables.firstNumber !== '') {
+                    console.log('there');
                     if (variables.currentNumber.length === 9) {
                         return;
                     }
-                    variables.currentNumber += numbers[key];
-                    const lastTerm = previousResults.length - 1;
-                    variables.evaluatedValue = currentMethod(previousResults[lastTerm], variables.currentNumber);
-                    getParaResult();
+                    if (previousResults.length === 0) {
+                        variables.currentNumber += numbers[key];
+                        variables.evaluatedValue = currentMethod(variables.firstNumber, variables.currentNumber);
+                        getParaResult();
+                        return;
+                    } else {
+                        variables.currentNumber += numbers[key];
+                        const lastTerm = previousResults.length - 1;
+                        variables.evaluatedValue = currentMethod(previousResults[lastTerm], variables.currentNumber);
+                        getParaResult();
+                        return;
+                    }
                     return;
                 }
             }
@@ -203,11 +222,53 @@ function executeSpecialKey(event) {
     if (target.classList[0] === 'delete') {
         executeDelete();
         return;
+    } else if (target.classList[0] === 'plus-or-minus') {
+        getMinus();
+        return;
+    }
+}
+function getMinus() {
+    if (variables.firstNumber !== '' && variables.operationSign !== '') {
+        let firstCharacter = variables['currentNumber'].charAt(0);
+        if (firstCharacter === '-') {
+            let placebo = variables['currentNumber'].slice(1);
+            variables.currentNumber = placebo;
+            getEvaluatedValue();
+            getDisplayContent();
+            return;
+        } else {
+            let placebo = '-' + variables.currentNumber;
+            variables.currentNumber = placebo;
+            getEvaluatedValue();
+            getDisplayContent();
+            return;
+        }
+    } else if (variables.currentNumber === '' && variables.evaluatedValue === '') {
+        let firstCharacter = variables['firstNumber'].charAt(0);
+        if (firstCharacter === '-') {
+            let placebo = variables['firstNumber'].slice(1);
+            variables.firstNumber = placebo;
+            getEvaluatedValue();
+            getDisplayContent();
+            return;
+        } else {
+            let placebo = '-' + variables.firstNumber;
+            variables.firstNumber = placebo;
+            getEvaluatedValue();
+            getDisplayContent();
+            return;
+        }
     }
 }
 function executeDelete() {
     const lastCharacter = content['displayContent'].charAt(content.displayContent.length - 1);
     if (content.displayContent === '') {
+        return;
+    } else if (variables.firstNumber !== '' && variables.currentNumber !== '') {
+        let placebo = variables['currentNumber'].slice(0, variables.currentNumber.length - 1);
+        variables.currentNumber = placebo;
+        getDisplayContent();
+        getEvaluatedValue();
         return;
     } else if (lastCharacter === operationViableSigns[0] || lastCharacter === operationViableSigns[1] || lastCharacter === operationViableSigns[2] || lastCharacter === operationViableSigns[3]) {
         variables.operationSign = '';
@@ -218,13 +279,6 @@ function executeDelete() {
         let placebo = variables['firstNumber'].slice(0, variables.firstNumber.length - 1);
         variables.firstNumber = placebo;
         getDisplayContent();
-        return;
-    } 
-    if (variables.firstNumber !== '' && variables.currentNumber !== '') {
-        let placebo = variables['currentNumber'].slice(0, variables.currentNumber.length - 1);
-        variables.currentNumber = placebo;
-        getDisplayContent();
-        getEvaluatedValue();
         return;
     }
 }
