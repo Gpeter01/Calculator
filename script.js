@@ -31,6 +31,43 @@ let clickCount = 0;
 let errorCheck = 0;
 let previousResults = [];
 
+const operationMethods = {
+    divide(a, b) { 
+        if (Number(a) === 0) {
+            variables.firstNumber = '';
+            variables.currentNumber = '';
+            variables.evaluatedValue = '';
+            variables.operationSign = '';
+            evaluatedDisplayContent = '';
+            clickCount = 0;
+            content.displayContent = 'Math Error';
+            paraQuery.textContent = content.displayContent;
+            paraQuery.style.color = 'red';
+            errorCheck++;
+            return;
+        }
+        return (Number(a) / Number(b)).toFixed(1);
+    },
+    multiply(a, b) {
+        return (Number(a) * Number(b)).toFixed(1);
+    },
+    add(a, b) {
+        return (Number(a) + Number(b)).toFixed(1);
+    },
+    subtract(a, b) {
+        return (Number(a) - Number(b)).toFixed(1);
+    }
+};
+const operations = ['division', 'multiplication', 'addition', 'subtraction', 'equal-to'];
+const mainOperations = [
+    operationMethods.divide,
+    operationMethods.multiply,
+    operationMethods.add,
+    operationMethods.subtract
+];
+const paraQuery = document.querySelector('.para-query');
+const paraResult = document.querySelector('.para-result');
+
 const operands = document.querySelector('.operands');
 operands.addEventListener('mousedown', iterateNumber);
 
@@ -40,8 +77,6 @@ special.addEventListener('click', executeSpecialKey);
 const calculatorOperations = document.querySelector('.calculator-operations');
 calculatorOperations.addEventListener('click', iterateOperation);
 
-const paraQuery = document.querySelector('.para-query');
-const paraResult = document.querySelector('.para-result');
 
 function iterateNumber(event) {
     const target = event.target;
@@ -98,7 +133,6 @@ function iterateNumber(event) {
                     variables.firstNumber = numbers[key];
                     paraQuery.style.color = 'black';
                     getParaResult();
-                    console.log(variables.firstNumber);
                     errorCheck = 0;
                     return;
                 }
@@ -164,46 +198,61 @@ function iterateNumber(event) {
     getDisplayContent();
     return;
 }
-function executeSpecialKey() {
-
+function executeSpecialKey(event) {
+    const target = event.target;
+    if (target.classList[0] === 'delete') {
+        executeDelete();
+        return;
+    }
 }
+function executeDelete() {
+    const lastCharacter = content['displayContent'].charAt(content.displayContent.length - 1);
+    if (content.displayContent === '') {
+        return;
+    } else if (lastCharacter === operationViableSigns[0] || lastCharacter === operationViableSigns[1] || lastCharacter === operationViableSigns[2] || lastCharacter === operationViableSigns[3]) {
+        variables.operationSign = '';
+        currentMethod = '';
+        getDisplayContent();
+        return getDisplayContent();
+    } else if (variables.currentNumber === '' && variables.evaluatedValue === '') {
+        let placebo = variables['firstNumber'].slice(0, variables.firstNumber.length - 1);
+        variables.firstNumber = placebo;
+        getDisplayContent();
+        return;
+    } 
+    if (variables.firstNumber !== '' && variables.currentNumber !== '') {
+        let placebo = variables['currentNumber'].slice(0, variables.currentNumber.length - 1);
+        variables.currentNumber = placebo;
+        getDisplayContent();
+        getEvaluatedValue();
+        return;
+    }
+}
+
+function getEvaluatedValue() {
+    if (previousResults.length === 0) {
+        if (variables.currentNumber !== '') {
+            variables.evaluatedValue = currentMethod(variables.firstNumber, variables.currentNumber);
+        } else {
+            variables.evaluatedValue = '';
+        }
+        getParaResult();
+        return;
+    } else {
+        let lastTerm = previousResults.length - 1;
+        if (variables.currentNumber === '') {
+            variables.evaluatedValue = previousResults[lastTerm];
+            getParaResult();
+            return;
+        }
+        variables.evaluatedValue = currentMethod(previousResults[lastTerm], variables.currentNumber);
+        getParaResult();
+        return;
+    }
+}
+
 function iterateOperation(event) {
     const target = event.target;
-    const operations = ['division', 'multiplication', 'addition', 'subtraction', 'equal-to'];
-    const operationMethods = {
-        divide(a, b) { 
-            if (Number(a) === 0) {
-                variables.firstNumber = '';
-                variables.currentNumber = '';
-                variables.evaluatedValue = '';
-                variables.operationSign = '';
-                evaluatedDisplayContent = '';
-                clickCount = 0;
-                content.displayContent = 'Math Error';
-                paraQuery.textContent = content.displayContent;
-                paraQuery.style.color = 'red';
-                errorCheck++;
-                console.log(content.displayContent);
-                return;
-            }
-            return (Number(a) / Number(b)).toFixed(1);
-        },
-        multiply(a, b) {
-            return (Number(a) * Number(b)).toFixed(1);
-        },
-        add(a, b) {
-            return (Number(a) + Number(b)).toFixed(1);
-        },
-        subtract(a, b) {
-            return (Number(a) - Number(b)).toFixed(1);
-        }
-    };
-    const mainOperations = [
-        operationMethods.divide,
-        operationMethods.multiply,
-        operationMethods.add,
-        operationMethods.subtract
-    ];
     function getEvaluatedDisplayContent() {
         const lastValue = content['displayContent'].charAt(content['displayContent'].length - 1);
         if ((lastValue === operationViableSigns[0] || lastValue === operationViableSigns[1] || lastValue === operationViableSigns[2] || lastValue === operationViableSigns[3]) && (variables.evaluatedValue !== '')) {
@@ -272,10 +321,48 @@ function getDisplayContent() {
         content.displayContent = variables.firstNumber + variables.operationSign + variables.currentNumber;
         paraQuery.textContent = content.displayContent;
         return;
-    } else {
+    } else if (content.displayContent === evaluatedDisplayContent) {
+        let characterCount = evaluatedDisplayContent.length - 1;
+        for (let i = characterCount; i >= 0; i--) {
+           if (evaluatedDisplayContent.charAt(i) === operationViableSigns[0] || evaluatedDisplayContent.charAt(i) === operationViableSigns[1] || evaluatedDisplayContent.charAt(i) === operationViableSigns[2] || evaluatedDisplayContent.charAt(i) === operationViableSigns[3]) {
+                const previousTerm = evaluatedDisplayContent.charAt(i - 1);
+                if (previousTerm !== operationViableSigns[0] || previousTerm !== operationViableSigns[1] || previousTerm !== operationViableSigns[2] || previousTerm !== operationViableSigns[3]) {
+                    variables.currentNumber = evaluatedDisplayContent.slice(i + 1);
+                    variables.operationSign = evaluatedDisplayContent.charAt(i);
+                    evaluatedDisplayContent = evaluatedDisplayContent.slice(0, i);
+                    previousResults.pop();
+                    if (evaluatedDisplayContent === variables.firstNumber) {
+                        evaluatedDisplayContent = '';
+                    }
+                    getNewMethod();
+                    getDisplayContent();
+                    return;
+                } else {
+                    variables.currentNumber = evaluatedDisplayContent.slice(i);
+                    variables.operationSign = evaluatedDisplayContent.charAt(i - 1);
+                    evaluatedDisplayContent = evaluatedDisplayContent.slice(0, i - 1);
+                    previousResults.pop();
+                    if (evaluatedDisplayContent === variables.firstNumber) {
+                        evaluatedDisplayContent = '';
+                    }
+                    getNewMethod();
+                    getDisplayContent();
+                    return;
+                }
+           }
+        }
+    } else if (evaluatedDisplayContent !== ''){
         content.displayContent = evaluatedDisplayContent + variables.operationSign + variables.currentNumber;
         paraQuery.textContent = content.displayContent;
         return;
+    }
+}
+function getNewMethod() {
+    for (let j = operationViableSigns.length - 2; j >= 0; j--) {
+        if (variables.operationSign === operationViableSigns[j]) {
+            currentMethod = mainOperations[j];
+            return;
+        }
     }
 }
 function getParaResult() {
