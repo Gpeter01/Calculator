@@ -57,7 +57,7 @@ const operationMethods = {
             errorCheck++;
             return;
         }
-        return (Number(a) / Number(b)).toFixed(1);
+        return (Number(a) / Number(b));
     },
     multiply(a, b) {
         if (b === '-') {
@@ -66,24 +66,24 @@ const operationMethods = {
         if (a === '-') {
            a = -1;
         }
-        return (Number(a) * Number(b)).toFixed(1);
+        return (Number(a) * Number(b));
     },
     add(a, b) {
         if (b === '-') {
-            return Number(a).toFixed(1);
+            return Number(a);
         } else if (a === '-') {
-            return '-' + Number(b).toFixed(1);
+            return '-' + Number(b);
         }
-        return (Number(a) + Number(b)).toFixed(1);
+        return (Number(a) + Number(b));
     },
     subtract(a, b) {
         if (b === '-') {
-            return Number(a).toFixed(1);
+            return Number(a);
         }
         if (a === '-') {
-            return Number(a).toFixed(1);
+            return Number(a);
         }
-        return (Number(a) - Number(b)).toFixed(1);
+        return (Number(a) - Number(b));
     }
 };
 const operations = ['division', 'multiplication', 'addition', 'subtraction', 'equal-to'];
@@ -95,7 +95,7 @@ const mainOperations = [
 ];
 
 const operands = document.querySelector('.operands');
-operands.addEventListener('mousedown', iterateNumber);
+operands.addEventListener('click', iterateNumber);
 
 const special = document.querySelector('.special');
 special.addEventListener('click', executeSpecialKey);
