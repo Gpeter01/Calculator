@@ -37,11 +37,13 @@ body {
     align-items: flex-end;
     color: black;
     height: 3vw;
-    padding: 0 10px 0 0;
+    padding: 0 15px 0;
+    overflow: scroll;
 }
 .para-result,
 .para-query {
     opacity: 1;
+    overflow: scroll;
 
 }
 .temp-result {
@@ -113,4 +115,28 @@ body {
 .calculator-container,
 .operands {
     gap: 0.5rem;
+}
+
+@media (width < 500px) {
+    .temp-result,
+    .query {
+        height: 11vw;
+    }
+    .calculator-operations > div,
+    .number-pad > div,
+    .special > div,
+    .key-feature > div {
+        width: 16vw;
+        height: 16vw;
+        border-radius: 1rem;
+    }
+    .number-pad,
+    .special,
+    .key-feature,
+    .calculator-operations,
+    .main-calculator,
+    .calculator-container,
+    .operands {
+        gap: 0.7rem;
+    }
 }

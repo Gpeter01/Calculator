@@ -11,6 +11,12 @@ function setContainerSize() {
     const keyFeatureWidth = (newStyle - parseFloat(styleOfNumberpad.gap)) / 2;
     zero.style.width = `${keyFeatureWidth}px`;
     point.style.width = `${keyFeatureWidth}px`;
+
+    const displayContainer = document.querySelector('.display-container');
+    const calculatorContainer = document.querySelector('.calculator-container');
+    const styleOfCalculatorContainer = getComputedStyle(calculatorContainer);
+    displayContainer.style.width = styleOfCalculatorContainer.width;
+    return;
 }
 setContainerSize();
 
@@ -49,10 +55,8 @@ const operationMethods = {
             paraQuery.textContent = content.displayContent;
             paraQuery.style.color = 'red';
             errorCheck++;
-            console.log(paraQuery.style.color);
             return;
         }
-        console.log('not here');
         return (Number(a) / Number(b)).toFixed(1);
     },
     multiply(a, b) {
@@ -191,7 +195,6 @@ function iterateNumber(event) {
                         return;
                     }
                 } else if (variables.operationSign !== '' && variables.firstNumber !== '') {
-                    console.log('there');
                     if (variables.currentNumber.length === 9) {
                         return;
                     }
