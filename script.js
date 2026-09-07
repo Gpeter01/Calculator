@@ -20,6 +20,7 @@ function setContainerSize() {
 }
 setContainerSize();
 
+// GLOBAL VARIABLES
 const variables = {
     'firstNumber' : '',
     'operationSign' : '',
@@ -94,6 +95,7 @@ const mainOperations = [
     operationMethods.subtract
 ];
 
+// EVENT LISTENERS
 const operands = document.querySelector('.operands');
 operands.addEventListener('click', iterateNumber);
 
@@ -119,10 +121,21 @@ function iterateNumber(event) {
         'zero': '0',
         'point': '.'
     }
+
     function getNumber() {
         for (const key in numbers) {
 
-
+            function checkForRepitition(number) {
+                if (number.length === 1) {
+                    if (numbers[key] === numbers.zero) {
+                        if (number.charAt(0) === numbers.zero) {
+                            return true;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            }
             function checkPointError() {
                 if (numbers[key] === numbers.point) {
                     let lastCharacter = content['displayContent'].charAt(content.displayContent.length - 1);
@@ -150,6 +163,7 @@ function iterateNumber(event) {
                 }
             }
 
+
             if (target.classList[0] === key) {
                 if (errorCheck > 0) {
                     variables.evaluatedValue = '';
@@ -170,6 +184,9 @@ function iterateNumber(event) {
                     variables.firstNumber += numbers[key];
                     return;
                 } else if ((variables.operationSign === '') && (variables.currentNumber === '')) {
+                    if (checkForRepitition(variables.firstNumber)) {
+                        return;
+                    }
                     if (variables.firstNumber.length === 9) {
                         return;
                     }
@@ -177,6 +194,9 @@ function iterateNumber(event) {
                     return;
                 } else if ((variables.firstNumber !== '') && (variables.currentNumber !== '')) {
                     if (previousResults.length === 0) {
+                        if (checkForRepitition(variables.currentNumber)) {
+                            return;
+                        }
                         if (variables.currentNumber.length === 9) {
                             return;
                         }
@@ -185,6 +205,9 @@ function iterateNumber(event) {
                         getParaResult();
                         return;
                     } else {
+                        if (checkForRepitition(variables.currentNumber)) {
+                            return;
+                        }
                         if (variables.currentNumber.length === 9) {
                             return;
                         }
@@ -195,6 +218,9 @@ function iterateNumber(event) {
                         return;
                     }
                 } else if (variables.operationSign !== '' && variables.firstNumber !== '') {
+                    if (checkForRepitition(variables.currentNumber)) {
+                        return;
+                    }
                     if (variables.currentNumber.length === 9) {
                         return;
                     }
@@ -204,6 +230,9 @@ function iterateNumber(event) {
                         getParaResult();
                         return;
                     } else {
+                        if (checkForRepitition(variables.currentNumber)) {
+                            return;
+                        }
                         variables.currentNumber += numbers[key];
                         const lastTerm = previousResults.length - 1;
                         variables.evaluatedValue = currentMethod(previousResults[lastTerm], variables.currentNumber);
