@@ -136,6 +136,15 @@ function iterateNumber(event) {
                     return false;
                 }
             }
+            function checkFirstCharacter(number) {
+                if (number.length === 1) {
+                    if (numbers[key] !== numbers.zero) {
+                        if (number.charAt(0) == numbers.zero) {
+                            return true;
+                        }
+                    }
+                } else return;
+            }
             function checkPointError() {
                 if (numbers[key] === numbers.point) {
                     let lastCharacter = content['displayContent'].charAt(content.displayContent.length - 1);
@@ -190,6 +199,10 @@ function iterateNumber(event) {
                     if (variables.firstNumber.length === 9) {
                         return;
                     }
+                    if (checkFirstCharacter(variables.firstNumber)) {
+                        variables.firstNumber = numbers[key]
+                        return;
+                    }
                     variables.firstNumber += numbers[key];
                     return;
                 } else if ((variables.firstNumber !== '') && (variables.currentNumber !== '')) {
@@ -198,6 +211,12 @@ function iterateNumber(event) {
                             return;
                         }
                         if (variables.currentNumber.length === 9) {
+                            return;
+                        }
+                        if (checkFirstCharacter(variables.currentNumber)) {
+                            variables.currentNumber = numbers[key]
+                            variables.evaluatedValue = currentMethod(variables.firstNumber, variables.currentNumber);
+                            getParaResult();
                             return;
                         }
                         variables.currentNumber += numbers[key];
@@ -209,6 +228,13 @@ function iterateNumber(event) {
                             return;
                         }
                         if (variables.currentNumber.length === 9) {
+                            return;
+                        }
+                        if (checkFirstCharacter(variables.currentNumber)) {
+                            variables.currentNumber = numbers[key]
+                            const lastTerm = previousResults.length - 1;
+                            variables.evaluatedValue = currentMethod(previousResults[lastTerm], variables.currentNumber);
+                            getParaResult();
                             return;
                         }
                         variables.currentNumber += numbers[key];
@@ -225,12 +251,25 @@ function iterateNumber(event) {
                         return;
                     }
                     if (previousResults.length === 0) {
+                        if (checkFirstCharacter(variables.currentNumber)) {
+                            variables.currentNumber = numbers[key]
+                            variables.evaluatedValue = currentMethod(variables.firstNumber, variables.currentNumber);
+                            getParaResult();
+                            return;
+                        }
                         variables.currentNumber += numbers[key];
                         variables.evaluatedValue = currentMethod(variables.firstNumber, variables.currentNumber);
                         getParaResult();
                         return;
                     } else {
                         if (checkForRepitition(variables.currentNumber)) {
+                            return;
+                        }
+                        if (checkFirstCharacter(variables.currentNumber)) {
+                            variables.currentNumber = numbers[key]
+                            const lastTerm = previousResults.length - 1;
+                            variables.evaluatedValue = currentMethod(previousResults[lastTerm], variables.currentNumber);
+                            getParaResult();
                             return;
                         }
                         variables.currentNumber += numbers[key];
